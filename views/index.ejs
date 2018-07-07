@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatApp</title>
+
+    
+</head>
+<body>
+
+<input type="text" id="textInput">
+<input type="button" value="Submit" onclick="submit()">
+<p id="result"></p>
+
+<div id="retDiv"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    var socket = io();
+
+    function elem(id) {
+        return document.getElementById(id);
+    }
+    let sessionID = '';
+    socket.on('session_id', function(data) {
+        sessionID = data.session_id;
+        console.log(sessionID);
+    });
+    
+    function submit() {
+        $.ajax({type: 'POST', url: "/", data: {data: elem('textInput').value, session_id: sessionID}, success: function(result){
+            // console.log(result);
+            // window = result;
+        }});
+        elem('textInput').value = '';
+    }
+
+    function retrieve() {
+        socket.emit('retrieve');
+    }
+
+    socket.on('data', function(data) {
+        console.log('reached');
+        elem('retDiv').innerHTML += data + '<br>';
+    });
+    socket.on('salam', function(data) {
+        console.log(data.data);
+    })
+
+
+</script>
+    
+</body>
+</html>
